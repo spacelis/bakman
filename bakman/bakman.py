@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-File: backman.py
+File: bakman.py
 Author: Wen Li
 Email: spacelis@gmail.com
 Github: http://github.com/spacelis
@@ -80,7 +80,7 @@ class StatLabeller(object):
 
 @click.command()
 @click.option('-j', '--use-json', is_flag=True, help='Use json as input.')
-@click.option('-f', '--rulefile', default='BackmanFile', help='The rulefile in JSON or YAML.')
+@click.option('-f', '--rulefile', default='BakmanFile', help='The rulefile in JSON or YAML.')
 @click.option('-r', '--regex', default=None, help='The regex for label the date of the file in the filename.')
 @click.option('-o', '--output', default=None, help='Output the remove command into a bash script for inspecting.')
 @click.argument('files', nargs=-1)

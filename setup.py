@@ -19,28 +19,28 @@ test_requirements = [
 ]
 
 setup(
-    name='backman',
+    name='bakman',
     version='0.1.0',
     description="A management tool for backup files.",
     long_description=readme + '\n\n' + history,
     author="Wen Li",
     author_email='wen.li@ucl.ac.uk',
-    url='https://github.com/spacelis/backman',
+    url='https://github.com/spacelis/bakman',
     packages=[
-        'backman',
+        'bakman',
     ],
-    package_dir={'backman':
-                 'backman'},
+    package_dir={'bakman':
+                 'bakman'},
     entry_points={
         'console_scripts': [
-            'backman=backman.cli:main'
+            'bakman=bakman.cli:main'
         ]
     },
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
     zip_safe=False,
-    keywords='backman',
+    keywords='bakman',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

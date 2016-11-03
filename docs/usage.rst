@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use Backman in a project::
+To use Bakman in a project::
 
-    import backman
+    import bakman

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-test_backman
+test_bakman
 ----------------------------------
 
-Tests for `backman` module.
+Tests for `bakman` module.
 """
 
 import pytest
@@ -13,8 +13,8 @@ import pytest
 from contextlib import contextmanager
 from click.testing import CliRunner
 
-from backman import backman
-from backman import cli
+from bakman import bakman
+from bakman import cli
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
     assert result.exit_code == 0
-    assert 'backman.cli.main' in result.output
+    assert 'bakman.cli.main' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
