@@ -11,7 +11,7 @@ Description:
 import logging
 from datetime import datetime
 from dateparser import parse as dtparse
-from grouper import MetaGrouper
+from bakman.grouper import MetaGrouper
 
 
 logger = logging.getLogger(__name__)

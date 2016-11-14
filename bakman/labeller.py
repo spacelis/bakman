@@ -15,21 +15,19 @@ from collections import OrderedDict
 from dateparser import parse as dtparse
 from datetime import datetime
 from itertools import groupby
-import click
-from marker import Marker
 
 
 class Labeller(object):
 
     """ Labelling non-usefuls"""
 
-    def __init__(self, files):
+    def __init__(self, ft_pairs):
         """TODO: to be defined1.
 
         :files: TODO
 
         """
-        self._files = files
+        self._files, self._timestamps = zip(*sorted(ft_pairs, key=lambda x: x[1]))
 
     def mark_with(self, marker):
         """TODO: Docstring for mark_with.
@@ -46,7 +44,7 @@ class Labeller(object):
         :returns: TODO
 
         """
-        raise NotImplementedError
+        return self._timestamps
 
 
 class RegexLabeller(Labeller):
@@ -59,16 +57,9 @@ class RegexLabeller(Labeller):
         :regex: TODO
 
         """
-        super(RegexLabeller, self).__init__(files)
         self._regex = re.compile(regex)
-
-
-    def get_times(self):
-        """ Extracting timestamp from file names.
-        :returns: TODO
-
-        """
-        return [dtparse(self._regex.match(f).group(1)) for f in self._files]
+        ft_pairs = [(f, dtparse(self._regex.match(f).group(1))) for f in files]
+        super(RegexLabeller, self).__init__(ft_pairs)
 
 
 class StatLabeller(Labeller):
@@ -81,18 +72,10 @@ class StatLabeller(Labeller):
         :mode: TODO
 
         """
-        super(StatLabeller, self).__init__(files)
         self._mode = mode
-
-    def get_times(self):
-        """TODO: Docstring for label.
-
-        :files: TODO
-        :returns: TODO
-
-        """
         tag = 'st_{0}time'.format(self._mode)
-        return [datetime.fromtimestamp(getattr(os.stat(f), tag)) for f in self._files]
+        ft_pairs = [(f, datetime.fromtimestamp(getattr(os.stat(f), tag))) for f in files]
+        super(StatLabeller, self).__init__(ft_pairs)
 
 
 class BinderLabeller(object):
