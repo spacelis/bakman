@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-test_bakman
+test_marker
 ----------------------------------
 
-Tests for `bakman` module.
+Tests for `marker` module.
 """
 
 import pytest
@@ -15,15 +15,6 @@ from click.testing import CliRunner
 
 from bakman import bakman
 from bakman import cli
-
-
-@pytest.fixture
-def response():
-    """Sample pytest fixture.
-    See more at: http://doc.pytest.org/en/latest/fixture.html
-    """
-    # import requests
-    # return requests.get('https://github.com/audreyr/cookiecutter-pypackage')
 
 
 def test_content(response):
