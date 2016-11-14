@@ -33,7 +33,7 @@ setup(
                  'bakman'},
     entry_points={
         'console_scripts': [
-            'bakman=bakman.cli:main'
+            'bakman=bakman.cli:console'
         ]
     },
     include_package_data=True,
