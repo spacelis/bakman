@@ -66,9 +66,9 @@ class DateRangeMarker(Marker):
     """Docstring for DateRange. """
 
 
-    __marker_name__ = 'range'
+    __marker_name__ = 'daterange'
 
-    def __init__(self, start='100 years age', end='now'):
+    def __init__(self, start='100 years ago', end='now'):
         """TODO: to be defined1. """
         Marker.__init__(self)
         if start is None and end is None:
