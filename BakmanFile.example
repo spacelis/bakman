@@ -1,0 +1,24 @@
+type: "composite"
+markers:
+  - type: "composite"
+    disjoint: false
+    markers:
+      - type: "grouped"
+        grouper: 
+          type: "weekly"
+      - type: "daterange"
+        start: "3 months ago"
+        end: "7 days ago"
+
+  - type: "composite"
+    disjoint: false
+    markers:
+      - type: "grouped"
+        grouper: 
+          type: "monthly"
+      - type: "daterange"
+        end: "3 months ago"
+
+  - type: "daterange"
+    start: "7 days ago"
+
