@@ -65,8 +65,15 @@ def console(use_json, rulefile, regex, output, group_regex, files):
     :returns: TODO
 
     """
-    rules = load_rules(rulefile, use_json)
+    try:
+        rules = load_rules(rulefile, use_json)
+    except IOError:
+        raise click.BadArgumentUsage('Rule file {0} cannot be found.'.format(rulefile))
     marker = Marker.from_rule(rules)
+    if len(files) == 1 and files[0] == '-':
+        files = [unicode(l.strip()) for l in sys.stdin]
+    elif len(files) == 0:
+        raise click.BadArgumentUsage('The filenames should be either on stdin (indicated by "-") or as parameters.')
     if regex is not None:
         labeller = RegexLabeller(files, regex)
     else:
