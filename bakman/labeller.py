@@ -47,6 +47,23 @@ class Labeller(object):
         return self._timestamps
 
 
+def mk_key_extractor(regex, group=1):
+    """TODO: Docstring for mk_key_extractor.
+
+    :regex: TODO
+    :returns: TODO
+
+    """
+    _regex = re.compile(regex)
+    if _regex.groups < group:
+        raise ValueError('The group index is out of bound.')
+    def _extractor(astring):
+        mat = _regex.match(astring)
+        if mat is not None:
+            return mat.group(1)
+        return None
+    return _extractor
+
 class RegexLabeller(Labeller):
 
     """Docstring for RegexLabeller. """
@@ -58,7 +75,10 @@ class RegexLabeller(Labeller):
 
         """
         self._regex = re.compile(regex)
-        ft_pairs = [(f, dtparse(self._regex.match(f).group(1))) for f in files]
+        key_extr = mk_key_extractor(self._regex)
+        ft_pairs = [(f, dtparse(key_extr(f)))
+                    for f in files
+                    if key_extr(f)]
         super(RegexLabeller, self).__init__(ft_pairs)
 
 
@@ -74,7 +94,8 @@ class StatLabeller(Labeller):
         """
         self._mode = mode
         tag = 'st_{0}time'.format(self._mode)
-        ft_pairs = [(f, datetime.fromtimestamp(getattr(os.stat(f), tag))) for f in files]
+        ft_pairs = [(f, datetime.fromtimestamp(getattr(os.stat(f), tag)))
+                    for f in files]
         super(StatLabeller, self).__init__(ft_pairs)
 
 
@@ -89,11 +110,12 @@ class BinderLabeller(object):
         :base: TODO
 
         """
+        gkey_extr = mk_key_extractor(group_ptn)
         super(BinderLabeller, self).__init__()
+        files = [f for f in files if gkey_extr(f)]
         self._group_ptn = re.compile(group_ptn)
-        self._key_func = lambda x: self._group_ptn.match(x).group(1)
         self._groups = OrderedDict()
-        for _, grp in groupby(sorted(files, key=self._key_func), key=self._key_func):
+        for _, grp in groupby(sorted(files, key=gkey_extr), key=gkey_extr):
             grp = list(grp)
             self._groups[grp[0]] = grp
         self._base = base(self._groups.keys())
