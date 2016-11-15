@@ -31,7 +31,7 @@ def load_rules(rulefile, use_json=False):
             return yaml.load(fin)
 
 
-def print_actions(fout, marks):
+def print_actions(fout, marks, cmd):
     """ Print the action script to the fout
 
     :fout: TODO
@@ -40,10 +40,15 @@ def print_actions(fout, marks):
     """
     rm_cnt, keep_cnt = 0, 0
     for f, m in marks:
-        fout.write('{0}/bin/rm -f {1}\n'.format('#' if m else '', f))
+        try:
+            loaded_cmd = cmd.format(f)
+        except:
+            loaded_cmd = "{cmd} {filename}".format(cmd=cmd, filename=f)
+        fout.write('{disabled} {loaded_cmd}\n'.format(
+            disabled='#' if m else '', loaded_cmd=loaded_cmd))
         rm_cnt += not m
         keep_cnt += m
-    fout.write('echo {0} removed and {1} kept.\n'.format(rm_cnt, keep_cnt))
+    fout.write('echo {0} actioned and {1} kept.\n'.format(rm_cnt, keep_cnt))
 
 
 @click.command()
@@ -57,8 +62,10 @@ def print_actions(fout, marks):
               help='The regex for indicating files belongs to the same backup snapshot.')
 @click.option('-o', '--output', default=None,
               help='Output the remove command into a bash script for inspecting.')
+@click.option('-c', '--command', default='/bin/rm -f',
+              help='Output the remove command into a bash script for inspecting.')
 @click.argument('files', nargs=-1)
-def console(use_json, rulefile, regex, output, group_regex, files):
+def console(use_json, rulefile, regex, output, group_regex, cmd, files):
     """ Parse the rules expressed in a dict object
 
     :dct: TODO
@@ -74,7 +81,7 @@ def console(use_json, rulefile, regex, output, group_regex, files):
 
     if len(files) == 1 and files[0] == '-':
         files = [unicode(l.strip()) for l in sys.stdin]
-    elif len(files) == 0:
+    if len(files) == 0:
         raise click.BadArgumentUsage('The filenames should be either on stdin (indicated by "-") or as parameters.')
 
     if regex is not None:
@@ -87,9 +94,9 @@ def console(use_json, rulefile, regex, output, group_regex, files):
 
     if output is not None:
         with open(output, 'w') as fout:
-            print_actions(fout, labeller.mark_with(marker))
+            print_actions(fout, labeller.mark_with(marker), cmd)
     else:
-        print_actions(sys.stdout, labeller.mark_with(marker))
+        print_actions(sys.stdout, labeller.mark_with(marker), cmd)
 
 
 if __name__ == "__main__":
