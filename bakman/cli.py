@@ -65,7 +65,7 @@ def print_actions(fout, marks, cmd):
 @click.option('-c', '--command', default='/bin/rm -f',
               help='Output the remove command into a bash script for inspecting.')
 @click.argument('files', nargs=-1)
-def console(use_json, rulefile, regex, output, group_regex, cmd, files):
+def console(use_json, rulefile, regex, output, group_regex, command, files):
     """ Parse the rules expressed in a dict object
 
     :dct: TODO
@@ -94,9 +94,9 @@ def console(use_json, rulefile, regex, output, group_regex, cmd, files):
 
     if output is not None:
         with open(output, 'w') as fout:
-            print_actions(fout, labeller.mark_with(marker), cmd)
+            print_actions(fout, labeller.mark_with(marker), command)
     else:
-        print_actions(sys.stdout, labeller.mark_with(marker), cmd)
+        print_actions(sys.stdout, labeller.mark_with(marker), command)
 
 
 if __name__ == "__main__":
