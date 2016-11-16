@@ -62,11 +62,12 @@ def print_actions(fout, marks, cmd):
 @click.option('-g', '--group-regex', default=None,
               help='The regex for indicating files belongs to the same backup snapshot.')
 @click.option('-o', '--output', default=None,
-              help='The output file for the compiled commands, if assigned. Otherwise they go to stdout.')
+              help='The output file for the compiled commands, if assigned. '
+              'Otherwise they go to stdout.')
 @click.option('-c', '--command', default='/bin/rm -f',
               help='The action to take for the discarded backup files, default: /bin/rm -f')
-@click.argument('files', nargs=-1)
-def console(use_json, rulefile, regex, output, group_regex, command, files): # pylint: disable=too-many-arguments
+@click.argument('files', nargs=-1)  # pylint: disable=too-many-arguments
+def console(use_json, rulefile, regex, output, group_regex, command, files):
     """ Parse the rules expressed in a dict object
 
     :dct: TODO
