@@ -9,12 +9,10 @@ Description:
 
 import re
 import os
-import sys
-import logging
 from collections import OrderedDict
-from dateparser import parse as dtparse
 from datetime import datetime
 from itertools import groupby
+from dateparser import parse as dtparse
 
 
 class Labeller(object):

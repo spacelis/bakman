@@ -36,7 +36,9 @@ class Grouper(object):
         self._key = key
 
     def __call__(self, timeseries):
-        return [[i for i, _ in g] for _, g in groupby(enumerate(timeseries), key=lambda x: self._key(x[1]))]
+        return [[i for i, _ in g]
+                for _, g in groupby(enumerate(timeseries),
+                                    key=lambda x: self._key(x[1]))]
 
     @classmethod
     def from_rule(cls, dct):
@@ -47,7 +49,9 @@ class Grouper(object):
 
         """
         if cls is Grouper:
-            return MetaGrouper.grouper_type[dct['type']].from_rule({k: v for k, v in dct.items() if k != 'type'})
+            return MetaGrouper\
+                .grouper_type[dct['type']]\
+                .from_rule({k: v for k, v in dct.items() if k != 'type'})
         else:
             return cls(**dct)
 
