@@ -10,6 +10,7 @@ Description: Commandline interface for Bakman
 
 import sys
 import click
+from click import BadArgumentUsage
 from bakman.labeller import RegexLabeller, StatLabeller, BinderLabeller
 from bakman.marker import Marker
 
@@ -39,15 +40,15 @@ def print_actions(fout, marks, cmd):
 
     """
     rm_cnt, keep_cnt = 0, 0
-    for f, m in marks:
-        try:
-            loaded_cmd = cmd.format(f)
-        except:
-            loaded_cmd = "{cmd} {filename}".format(cmd=cmd, filename=f)
+    for fname, mark in marks:
+        if '{}' in cmd or '{0}' in cmd:
+            loaded_cmd = cmd.format(fname)
+        else:
+            loaded_cmd = "{cmd} {filename}".format(cmd=cmd, filename=fname)
         fout.write('{disabled} {loaded_cmd}\n'.format(
-            disabled='#' if m else '', loaded_cmd=loaded_cmd))
-        rm_cnt += not m
-        keep_cnt += m
+            disabled='#' if mark else '', loaded_cmd=loaded_cmd))
+        rm_cnt += not mark
+        keep_cnt += mark
     fout.write('echo {0} actioned and {1} kept.\n'.format(rm_cnt, keep_cnt))
 
 
@@ -61,11 +62,11 @@ def print_actions(fout, marks, cmd):
 @click.option('-g', '--group-regex', default=None,
               help='The regex for indicating files belongs to the same backup snapshot.')
 @click.option('-o', '--output', default=None,
-              help='Output the remove command into a bash script for inspecting.')
+              help='The output file for the compiled commands, if assigned. Otherwise they go to stdout.')
 @click.option('-c', '--command', default='/bin/rm -f',
-              help='Output the remove command into a bash script for inspecting.')
+              help='The action to take for the discarded backup files, default: /bin/rm -f')
 @click.argument('files', nargs=-1)
-def console(use_json, rulefile, regex, output, group_regex, command, files):
+def console(use_json, rulefile, regex, output, group_regex, command, files): # pylint: disable=too-many-arguments
     """ Parse the rules expressed in a dict object
 
     :dct: TODO
@@ -75,19 +76,17 @@ def console(use_json, rulefile, regex, output, group_regex, command, files):
     try:
         rules = load_rules(rulefile, use_json)
     except IOError:
-        raise click.BadArgumentUsage('Rule file {0} cannot be found.'.format(rulefile))
+        raise BadArgumentUsage('Rule file {0} cannot be found.'.format(rulefile))
 
     marker = Marker.from_rule(rules)
 
     if len(files) == 1 and files[0] == '-':
         files = [unicode(l.strip()) for l in sys.stdin]
     if len(files) == 0:
-        raise click.BadArgumentUsage('The filenames should be either on stdin (indicated by "-") or as parameters.')
+        raise BadArgumentUsage(
+            'The filenames should be either on stdin (indicated by "-") or as parameters.')
 
-    if regex is not None:
-        labeller = RegexLabeller(files, regex)
-    else:
-        labeller = StatLabeller(files)
+    labeller = StatLabeller(files) if regex is None else RegexLabeller(files, regex)
 
     if group_regex:
         labeller = BinderLabeller(files, group_regex, labeller.__class__)
@@ -100,4 +99,4 @@ def console(use_json, rulefile, regex, output, group_regex, command, files):
 
 
 if __name__ == "__main__":
-    console()
+    console()  # pylint: disable=no-value-for-parameter
