@@ -110,10 +110,10 @@ class BinderLabeller(object):
         """
         gkey_extr = mk_key_extractor(group_ptn)
         super(BinderLabeller, self).__init__()
-        files = [f for f in files if gkey_extr(f)]
+        groupable_files = [f for f in files if gkey_extr(f)]
         self._group_ptn = re.compile(group_ptn)
         self._groups = OrderedDict()
-        for _, grp in groupby(sorted(files, key=gkey_extr), key=gkey_extr):
+        for _, grp in groupby(sorted(groupable_files, key=gkey_extr), key=gkey_extr):
             grp = list(grp)
             self._groups[grp[0]] = grp
         self._base = base(self._groups.keys())
