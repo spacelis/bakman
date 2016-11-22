@@ -45,7 +45,7 @@ class Labeller(object):
         return self._timestamps
 
 
-def mk_key_extractor(regex, group=1):
+def mk_key_extractor(regex, group_idx=None, matching=False):
     """TODO: Docstring for mk_key_extractor.
 
     :regex: TODO
@@ -53,12 +53,16 @@ def mk_key_extractor(regex, group=1):
 
     """
     _regex = re.compile(regex)
-    if _regex.groups < group:
+    _regfunc = _regex.match if matching else _regex.search
+    if group_idx is None:
+        group_idx = 1 if matching else 0
+    if _regex.groups < group_idx:
         raise ValueError('The group index is out of bound.')
+
     def _extractor(astring):
-        mat = _regex.match(astring)
+        mat = _regfunc(astring)
         if mat is not None:
-            return mat.group(1)
+            return mat.group(group_idx)
         return None
     return _extractor
 
